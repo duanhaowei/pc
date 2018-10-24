@@ -1,0 +1,65 @@
+<template>
+  <div id="app">
+    what the fuck?
+    <div>{{ count }}</div>
+    <div>{{ addOneCount }}</div>
+    <button @click="increment">增加</button>
+    <button @click="incresByParam">增加10</button>
+    <button @click="actionA">异步增加</button>
+    <button @click="testpromise2">promise测试</button>
+  </div>
+</template>
+
+<script>
+  import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+
+  export default {
+    name: "App",
+    data() {
+      return {
+        aa: "aa",
+        localCount: 1
+
+      };
+    },
+    methods: {
+      /* increment() {//可以改用mapMutations 方式方便实现
+         // this.count++
+         this.$store.commit("increment");
+       },*/
+      incresByParam() {
+        // this.count++
+        this.$store.commit("incresByParam", 10);
+      },
+      testpromise2() {
+        this.$store.dispatch("testpromise").then(() => {
+          console.log("异步promist结束");
+        });
+      },
+      ...mapMutations([
+        "increment"
+      ]),
+      ...mapActions(["actionA", "testpromise"])
+    },
+    computed: mapState({
+      // 箭头函数可使代码更简练
+      // count: state => state.count,
+
+      // 传字符串参数 'count' 等同于 `state => state.count`
+      count: "count",
+
+      // 为了能够使用 `this` 获取局部状态，必须使用常规函数
+      countPlusLocalState(state) {
+        return state.count + this.localCount;
+      },
+      addOneCount() {
+        return this.$store.getters.addOneCount;
+      }
+
+    }),
+    ...mapGetters([
+      "addByParam"
+      // ...
+    ])
+  };
+</script>

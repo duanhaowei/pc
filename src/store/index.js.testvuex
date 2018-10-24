@@ -1,0 +1,64 @@
+/**
+ * Created by howard on 2018/10/16.
+ */
+import Vue from "vue";
+import Vuex from "vuex";
+
+Vue.use(Vuex);
+
+/*
+
+提前在你的 store 中初始化好所有所需属性。
+Vue.set(obj, 'newProp', 123), 或者state.obj = { ...state.obj, newProp: 123 }
+Mutation 必须是同步函数
+
+默认情况下，模块内部的 action、mutation 和 getter 是注册在全局命名空间的——这样使得多个模块能够对同一 mutation
+或 action 作出响应。
+实际上如果使用命名空间配置，则会根据路径调整getter，mutataion和action的命名，会有一些操作繁琐一点
+
+*/
+const store = new Vuex.Store({
+  state: {
+    count: 0
+  },
+  /*Mutation 必须是同步函数*/
+  mutations: {
+    increment(state) {
+      state.count++;
+    },
+    incresByParam(state, param) {
+      state.count = state.count + param;
+    }
+  },
+  /*actions则可以使用异步方式进行数据的改变 , 但是在修改数据方面，还是需要commit mutations*/
+  actions: {
+    actionA({ commit }) {
+      setTimeout(() => {
+        commit("increment");
+      }, 1000);
+    },
+    testpromise({ commit }) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          commit("increment");
+          resolve();
+        }, 1000);
+      });
+    },
+  },
+  /*
+  在业务需求中，很多时候需要根据 state里的数值，经过处理在使用。比如获得某个列表中
+  状态为完成的数据。那么这个时候方法抽象出来则是getter存在的意义。第二种是带参数的写法。
+   */
+  getters: {
+    addOneCount: state => {
+      let addOneCount = state.count + 1;
+      return addOneCount;
+    },
+    addByParam: (state) => (param) => {
+      return state.count + param;
+    }
+  }
+});
+
+export default store;
